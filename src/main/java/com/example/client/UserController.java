@@ -63,7 +63,7 @@ public class UserController implements Initializable {
             return gson.fromJson(reader, userListType);
         } catch (IOException e) {
             e.printStackTrace();
-            return new ArrayList<>(); // Trả về danh sách rỗng nếu có lỗi
+            return new ArrayList<>();
         }
     }
     private void writeUsersToJson(ArrayList<User> users) {
@@ -116,7 +116,7 @@ public class UserController implements Initializable {
     }
 
     private String fetchUrlContent(String urlString) throws IOException {
-        String apiUrl = "http://localhost:8080/fetch?url=" + urlString; // Địa chỉ server
+        String apiUrl = "http://localhost:8080/fetch?url=" + urlString;
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet request = new HttpGet(apiUrl);
             try (CloseableHttpResponse response = httpClient.execute(request)) {
@@ -126,7 +126,7 @@ public class UserController implements Initializable {
     }
 
     public void fetchUrlsFromServer() {
-        String apiUrl = "http://localhost:8080/api/urls"; // Địa chỉ API
+        String apiUrl = "http://localhost:8080/api/urls";
 
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();

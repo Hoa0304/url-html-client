@@ -19,10 +19,9 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,11 +93,9 @@ public class RoleSelectionController extends UserController{
             return;
         }
 
-        // Cập nhật email trong UserController
         if (userController != null) {
             userController.updateEmail(email);
         }
-
 
         if (selectedRoles.contains("user")) {
 
@@ -109,6 +106,7 @@ public class RoleSelectionController extends UserController{
             ArrayList<User> existingUsers = readUsersFromJson();
             existingUsers.add(newUser);
             writeUsersToJson(existingUsers);
+            initJson();
             switchToScene1(event);
         } else if (selectedRoles.contains("admin")) {
             switchToScene2(event);
@@ -148,6 +146,71 @@ public class RoleSelectionController extends UserController{
         alert.setContentText(message);
         alert.showAndWait();
     }
+    public void initJson(){
+        String filePath = "users.json";
+        // Đọc dữ liệu JSON từ file
+        StringBuilder jsonData = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                jsonData.append(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        try {
+            URL url = new URL("http://<IP_ADDRESS>:8080/api/data");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonData.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                System.out.println("Data sent successfully");
+            } else {
+                System.out.println("POST request failed: " + conn.getResponseCode());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Nhận dữ liệu JSON từ máy chủ
+        try {
+            URL url = new URL("http://<IP_ADDRESS>:8080/api/data");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                // Ghi đè dữ liệu JSON vào file
+                try (FileWriter fileWriter = new FileWriter(filePath, false)) { // false để ghi đè
+                    fileWriter.write(response.toString());
+                    System.out.println("Received JSON written to file, overwriting old content");
+                }
+            } else {
+                System.out.println("GET request failed: " + conn.getResponseCode());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private ArrayList<User> readUsersFromJson() {
         Gson gson = new Gson();
