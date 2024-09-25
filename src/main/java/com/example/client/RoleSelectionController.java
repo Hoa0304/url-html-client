@@ -160,7 +160,7 @@ public class RoleSelectionController extends UserController{
             return;
         }
         try {
-            URL url = new URL("http://<IP_ADDRESS>:8080/api/data");
+            URL url = new URL("http://10.60.204.129:8080/api/data");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
@@ -183,7 +183,7 @@ public class RoleSelectionController extends UserController{
 
         // Nhận dữ liệu JSON từ máy chủ
         try {
-            URL url = new URL("http://<IP_ADDRESS>:8080/api/data");
+            URL url = new URL("http://10.60.204.129:8080/api/data");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");

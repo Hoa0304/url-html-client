@@ -116,7 +116,7 @@ public class UserController implements Initializable {
     }
 
     private String fetchUrlContent(String urlString) throws IOException {
-        String apiUrl = "http://localhost:8080/fetch?url=" + urlString;
+        String apiUrl = "http://10.60.204.129:8080/fetch?url=" + urlString;
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet request = new HttpGet(apiUrl);
             try (CloseableHttpResponse response = httpClient.execute(request)) {
@@ -126,7 +126,7 @@ public class UserController implements Initializable {
     }
 
     public void fetchUrlsFromServer() {
-        String apiUrl = "http://localhost:8080/api/urls";
+        String apiUrl = "http://10.60.204.129:8080/api/urls";
 
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -149,7 +149,7 @@ public class UserController implements Initializable {
     }
 
     private void saveUrlToServer(String url) {
-        String apiUrl = "http://localhost:8080/api/urls"; // Endpoint để lưu URL
+        String apiUrl = "http://10.60.204.129:8080/api/urls"; // Endpoint để lưu URL
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost postRequest = new HttpPost(apiUrl);

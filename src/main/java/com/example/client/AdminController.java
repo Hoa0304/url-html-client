@@ -119,7 +119,7 @@ public class AdminController {
                 return new Task<>() {
                     @Override
                     protected ObservableList<String> call() throws Exception {
-                        URL url = new URL("http://localhost:8080/api/urls");
+                        URL url = new URL("http://10.60.204.129:8080/api/urls");
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
                         connection.connect();
