@@ -6,20 +6,23 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class HelloApplication extends Application { ;
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("role.fxml"));
+        Parent root = fxmlLoader.load();
+
+        Scene scene = new Scene(root);
+        stage.setResizable(false);
+//        stage.initStyle(StageStyle.UNDECORATED);
+        stage.setScene(scene);;
 
         stage.show();
-        HelloController controller = fxmlLoader.getController();
-        controller.start();
     }
 
     public static void main(String[] args) {

@@ -2,13 +2,18 @@ package com.example.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -21,20 +26,65 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class HelloController {
+public class UserController implements Initializable {
     @FXML
     private TextField urlField;
+    @FXML
+    private Label email;
+    public static Label lblEmail;
     @FXML
     private TextArea htmlContentArea;
     @FXML
     private ListView<String> urlListView;
 
     private List<String> urls = new ArrayList<>();
+
+    private int uid;
+
+    public RoleSelectionController rl;
+    public void updateDisplay(String newValue) {
+        email.setText(newValue);
+    }
+
+    private ArrayList<User> readUsersFromJson() {
+        Gson gson = new Gson();
+        Type userListType = new TypeToken<ArrayList<User>>() {}.getType();
+        try (FileReader reader = new FileReader("users.json")) {
+            return gson.fromJson(reader, userListType);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>(); // Trả về danh sách rỗng nếu có lỗi
+        }
+    }
+    private void writeUsersToJson(ArrayList<User> users) {
+        Gson gson = new Gson();
+        try (FileWriter writer = new FileWriter("users.json")) {
+            gson.toJson(users, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setUid(int uid) {
+        System.out.println(uid);
+        this.uid = uid;
+    }
+    public int getUid() {
+        return uid;
+    }
+    public void setRoleSelectionController(RoleSelectionController rl) {
+        this.rl = rl;
+    }
 
     @FXML
     private void fetchHtml() {
@@ -50,7 +100,9 @@ public class HelloController {
                 protected void succeeded() {
                     htmlContentArea.setText(getValue());
                     saveUrlToServer(url);
-                    updateUrlList();  // Cập nhật danh sách URL sau khi đã lưu
+                    fetchUrlsFromServer();
+                    urlField.clear();
+                    updateUrlList();
                 }
 
                 @Override
@@ -59,7 +111,7 @@ public class HelloController {
                 }
             };
             new Thread(task).start();
-            urlField.clear();  // Xóa trường nhập URL
+            urlField.clear();
         }
     }
 
@@ -88,8 +140,7 @@ public class HelloController {
 
                 Platform.runLater(() -> {
                     urlListView.setItems(FXCollections.observableArrayList(fetchedUrls));
-                    urls.clear();  // Xóa danh sách URL cũ
-                    urls.addAll(fetchedUrls);  // Cập nhật danh sách URL mới
+                    urls.addAll(fetchedUrls);
                 });
             }
         } catch (IOException e) {
@@ -105,7 +156,7 @@ public class HelloController {
 
             // Tạo JSON payload
             ObjectMapper objectMapper = new ObjectMapper();
-            UrlRequest urlRequest = new UrlRequest(url);  // Khởi tạo đối tượng UrlRequest với URL
+            UrlRequest urlRequest = new UrlRequest(url);
             String jsonPayload = objectMapper.writeValueAsString(urlRequest);  // Chuyển đổi thành chuỗi JSON
 
             StringEntity entity = new StringEntity(jsonPayload);
@@ -113,7 +164,6 @@ public class HelloController {
             postRequest.setHeader("Content-Type", "application/json");
 
             try (CloseableHttpResponse response = httpClient.execute(postRequest)) {
-                // Xử lý phản hồi nếu cần
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -125,8 +175,9 @@ public class HelloController {
         urlListView.getItems().addAll(urls);
     }
 
+
     @FXML
-    public void start() {
+    public void start(Stage prst) {
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
@@ -144,5 +195,30 @@ public class HelloController {
         }
 
         fetchUrlsFromServer();
+        prst.setOnCloseRequest(event -> {
+            System.out.println(":adsfas");
+            ArrayList<User> list = readUsersFromJson();
+            for(User user : list) {
+                System.out.println("x"+user.getEmail());
+                System.out.println("uid"+lblEmail.getText());
+                if(user.getEmail().equals(lblEmail.getText())){
+                    user.setActive(false);
+                    System.out.println("userss"+user.toString());
+                }
+            }
+            for(User user: list){
+                System.out.println("active"+user.isActive());
+            }
+            writeUsersToJson(list);
+        });
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        lblEmail = email;
+    }
+    public void updateEmail(String emailAddress) {
+        lblEmail.setText(emailAddress);
+        email.setText(emailAddress);
     }
 }

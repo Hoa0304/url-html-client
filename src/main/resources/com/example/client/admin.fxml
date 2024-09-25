@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1129.0" style="-fx-background-color: #2F3133;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.client.AdminController">
+    <children>
+        <AnchorPane layoutX="59.0" layoutY="92.0" prefHeight="620.0" prefWidth="288.0" style="-fx-background-color: transparent; -fx-border-radius: 30; -fx-border-color: #C10C99; -fx-border-width: 3;">
+         <children>
+            <Label layoutX="36.0" layoutY="14.0" text="active people">
+                <font>
+                    <Font name="MV Boli" size="36.0" />
+                </font>
+                <textFill>
+                    <LinearGradient endX="1.0" endY="1.0">
+                        <stops>
+                            <Stop>
+                                <color>
+                                    <Color red="0.8039215803146362" green="0.27450981736183167" blue="0.8509804010391235" />
+                                </color>
+                            </Stop>
+                            <Stop offset="1.0">
+                                <color>
+                                    <Color red="0.15294118225574493" green="0.772549033164978" blue="0.7882353067398071" />
+                                </color>
+                            </Stop>
+                        </stops>
+                    </LinearGradient>
+                </textFill>
+            </Label>
+              <ListView fx:id="activePeople" layoutX="30.0" layoutY="87.0" prefHeight="530.0" prefWidth="230.0" style="-fx-background-color: transparent;" />
+         </children>
+        </AnchorPane>
+      <AnchorPane layoutX="399.0" layoutY="218.0" prefHeight="548.0" prefWidth="672.0" style="-fx-background-color: #484848; -fx-background-radius: 20;">
+         <children>
+            <ListView fx:id="allUrlList" layoutX="30.0" layoutY="47.0" prefHeight="466.0" prefWidth="608.0" stylesheets="@styles.css" />
+         </children>
+      </AnchorPane>
+        <AnchorPane layoutX="428.0" layoutY="92.0" prefHeight="97.0" prefWidth="615.0" style="-fx-background-radius: 10; -fx-background-color: linear-gradient(to bottom right, #C10C99, #27C5C9);">
+        </AnchorPane>
+    </children>
+</AnchorPane>
